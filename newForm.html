@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation Project</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px 0;
+    }
+    .card {
+      max-width: 500px;
+      margin: auto;
+      border-radius: 1rem;
+    }
+    small {
+      font-size: 0.9rem;
+    }
+    @media (max-width: 576px) {
+      .card {
+        margin: 0 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-lg p-4 rounded-4">
+          <h2 class="text-center mb-4">Registration Form</h2>
+          <form id="registerForm" novalidate>
+            
+            <!-- Full Name -->
+            <div class="mb-3">
+              <label for="fullname" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="fullname" placeholder="Enter your full name">
+              <small class="text-danger" id="fullnameError"></small>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email ID</label>
+              <input type="email" class="form-control" id="email" placeholder="Enter your email">
+              <small class="text-danger" id="emailError"></small>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="phone" placeholder="Enter your 10-digit phone number">
+              <small class="text-danger" id="phoneError"></small>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                <button type="button" class="btn btn-outline-secondary" id="togglePassword"><i class="bi bi-eye-slash"></i></button>
+              </div>
+              <small class="text-danger" id="passwordError"></small>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password">
+                <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword"><i class="bi bi-eye-slash"></i></button>
+              </div>
+              <small class="text-danger" id="confirmPasswordError"></small>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get form and input fields
+    const form = document.getElementById("registerForm");
+    const fullname = document.getElementById("fullname");
+    const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+
+    // Error fields
+    const fullnameError = document.getElementById("fullnameError");
+    const emailError = document.getElementById("emailError");
+    const phoneError = document.getElementById("phoneError");
+    const passwordError = document.getElementById("passwordError");
+    const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+    // Toggle password visibility
+    const togglePassword = document.getElementById("togglePassword");
+    const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+
+    togglePassword.addEventListener("click", function() {
+      if (password.type === "password") {
+        password.type = "text";
+        togglePassword.innerHTML = '<i class="bi bi-eye"></i>';
+      } else {
+        password.type = "password";
+        togglePassword.innerHTML = '<i class="bi bi-eye-slash"></i>';
+      }
+    });
+
+    toggleConfirmPassword.addEventListener("click", function() {
+      if (confirmPassword.type === "password") {
+        confirmPassword.type = "text";
+        toggleConfirmPassword.innerHTML = '<i class="bi bi-eye"></i>';
+      } else {
+        confirmPassword.type = "password";
+        toggleConfirmPassword.innerHTML = '<i class="bi bi-eye-slash"></i>';
+      }
+    });
+
+    // Utility function to show error
+    function showError(inputField, errorField, message) {
+      errorField.textContent = message;
+      inputField.classList.add("is-invalid");
+    }
+
+    // Utility function to clear error
+    function clearError(inputField, errorField) {
+      errorField.textContent = "";
+      inputField.classList.remove("is-invalid");
+    }
+
+    // Validation functions
+    function validateName() {
+      if (fullname.value.trim().length < 5) {
+        showError(fullname, fullnameError, "Name must be at least 5 characters.");
+        return false;
+      }
+      clearError(fullname, fullnameError);
+      return true;
+    }
+
+    function validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.value.trim())) {
+        showError(email, emailError, "Please enter a valid email address.");
+        return false;
+      }
+      clearError(email, emailError);
+      return true;
+    }
+
+    function validatePhone() {
+      const phoneValue = phone.value.trim();
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(phoneValue)) {
+        showError(phone, phoneError, "Phone number must be 10 digits.");
+        return false;
+      }
+      if (phoneValue === "123456789") {
+        showError(phone, phoneError, "Phone number cannot be 123456789.");
+        return false;
+      }
+      clearError(phone, phoneError);
+      return true;
+    }
+
+    function validatePassword() {
+      const passwordValue = password.value.trim();
+      if (passwordValue.length < 8) {
+        showError(password, passwordError, "Password must be at least 8 characters long.");
+        return false;
+      }
+      if (passwordValue.toLowerCase() === "password") {
+        showError(password, passwordError, "Password cannot be 'password'.");
+        return false;
+      }
+      if (passwordValue.toLowerCase() === fullname.value.trim().toLowerCase()) {
+        showError(password, passwordError, "Password cannot be your name.");
+        return false;
+      }
+      clearError(password, passwordError);
+      return true;
+    }
+
+    function validateConfirmPassword() {
+      if (password.value.trim() !== confirmPassword.value.trim()) {
+        showError(confirmPassword, confirmPasswordError, "Passwords do not match.");
+        return false;
+      }
+      if (confirmPassword.value.trim() === "") {
+        showError(confirmPassword, confirmPasswordError, "Please confirm your password.");
+        return false;
+      }
+      clearError(confirmPassword, confirmPasswordError);
+      return true;
+    }
+
+    // Event listener for form submission
+    form.addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      // Run all validations
+      const isNameValid = validateName();
+      const isEmailValid = validateEmail();
+      const isPhoneValid = validatePhone();
+      const isPasswordValid = validatePassword();
+      const isConfirmPasswordValid = validateConfirmPassword();
+
+      if (isNameValid && isEmailValid && isPhoneValid && isPasswordValid && isConfirmPasswordValid) {
+        // If all are valid, you can submit the form or show a success message
+        alert("Registration successful!");
+        form.reset(); // Optional: reset the form
+        // Clear all errors on successful submission
+        clearError(fullname, fullnameError);
+        clearError(email, emailError);
+        clearError(phone, phoneError);
+        clearError(password, passwordError);
+        clearError(confirmPassword, confirmPasswordError);
+      }
+    });
+
+    // Add real-time validation on input
+    fullname.addEventListener("input", validateName);
+    email.addEventListener("input", validateEmail);
+    phone.addEventListener("input", validatePhone);
+    password.addEventListener("input", validatePassword);
+    confirmPassword.addEventListener("input", validateConfirmPassword);
+
+  </script>
+</body>
+</html>
